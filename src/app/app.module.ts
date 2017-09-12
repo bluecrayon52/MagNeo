@@ -5,8 +5,10 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { UserComponent } from './components/user/user.component';
-
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { DataService } from './services/data.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MdButtonModule, MdCheckboxModule, MdSidenavModule, MdToolbarModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,13 @@ import { DataService } from './services/data.service';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    NgbModule.forRoot(),
+    BrowserAnimationsModule,
+    MdButtonModule,
+    MdCheckboxModule,
+    MdSidenavModule,
+    MdToolbarModule
   ],
   providers: [DataService],
   bootstrap: [AppComponent]
