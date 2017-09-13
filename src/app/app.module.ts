@@ -10,6 +10,8 @@ import { DataService } from './services/data.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MdButtonModule, MdCheckboxModule, MdSidenavModule, MdToolbarModule} from '@angular/material';
 
+import { AgmCoreModule } from '@agm/core';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +26,10 @@ import {MdButtonModule, MdCheckboxModule, MdSidenavModule, MdToolbarModule} from
     MdButtonModule,
     MdCheckboxModule,
     MdSidenavModule,
-    MdToolbarModule
+    MdToolbarModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCFrdsvRcV562OQXO9BEsibOvTCNYtyUvc'
+    })
   ],
   providers: [DataService],
   bootstrap: [AppComponent]
