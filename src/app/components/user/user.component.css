@@ -41,11 +41,6 @@
     padding: 20px;
     background:#8d9db6; 
   }
-
-  agm-map {
-    height: 900px;
-    z-index: 1;    
-      }
   
   .main-title {
     font-size: 32px;

@@ -5,17 +5,21 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { UserComponent } from './components/user/user.component';
+import { MapComponent } from './components/map/map.component';
+
+import { AgmCoreModule } from '@agm/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { DataService } from './services/data.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MdButtonModule, MdCheckboxModule, MdSidenavModule, MdToolbarModule} from '@angular/material';
 
-import { AgmCoreModule } from '@agm/core';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserComponent
+    UserComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

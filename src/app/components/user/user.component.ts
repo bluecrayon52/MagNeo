@@ -8,10 +8,7 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-  title: string;
-  lat: number;
-  lng: number;
-
+  
   constructor(private dataService: DataService) {
     console.log('constructor ran ...');
 
@@ -19,9 +16,6 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
     console.log('ngOnInit ran ...');
-    this.title = 'This is a Map';
-    this.lat = 51.678418;
-    this.lng = 7.809007;
   }
 
 }
