@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class DataService {
 
-  constructor(public http: Http) {
+  result:any;
+
+  constructor(private _http: Http) {
     console.log('Data service connected...');
   }
 
-  getPosts() {
-
+  getLayers() {
+    return this._http.get("/api/layers")
+    .map(result => this.result = result.json().data);
   }
 
 }

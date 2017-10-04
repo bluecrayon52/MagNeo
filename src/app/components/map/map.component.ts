@@ -94,6 +94,9 @@ export class MapComponent implements OnInit {
               },
               {
                   "lightness": 45
+              },
+              {
+                "visibility": "off"       // turned this off
               }
           ]
       },
@@ -103,6 +106,9 @@ export class MapComponent implements OnInit {
           "stylers": [
               {
                   "color": "#eeeeee"
+              },
+              {
+                  "visibility": "off"       // turned this off
               }
           ]
       },
@@ -112,6 +118,9 @@ export class MapComponent implements OnInit {
           "stylers": [
               {
                   "color": "#7b7b7b"
+              },
+              {
+                  "visibility": "off"       // turned this off  
               }
           ]
       },
@@ -120,7 +129,10 @@ export class MapComponent implements OnInit {
           "elementType": "labels.text.stroke",
           "stylers": [
               {
-                  "color": "#ffffff"
+                  "color": "#ffffff",
+              },
+              {
+                  "visibility": "off"       // turned this off 
               }
           ]
       },
@@ -129,7 +141,7 @@ export class MapComponent implements OnInit {
           "elementType": "all",
           "stylers": [
               {
-                  "visibility": "simplified"
+                  "visibility": "off"       // turned this off 
               }
           ]
       },
@@ -187,6 +199,18 @@ export class MapComponent implements OnInit {
           "stylers": [
               {
                   "color": "#ffffff"
+              }
+          ]
+      },
+      {
+          "featureType":"landscape.natural.terrain",      // added this for terrain 
+          "elementType": "geometry.fill",
+          "stylers":[
+            {
+                "color": "#eeeeee"
+            },
+              {
+                  "visibility":"on"
               }
           ]
       }

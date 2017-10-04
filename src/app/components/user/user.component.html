@@ -17,28 +17,5 @@
   
 </md-toolbar>
 
-<md-sidenav-container class="sidenav-container">
-    <md-sidenav #sidenav class="sidenav" (mouseleave)="sidenav.close()">
-        Side Nav Bar for more options
-        <div class='card'> 
-            <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
-                Button 
-            </button>
-            <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
-                Button 
-            </button>
-            <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
-                Button 
-            </button>
-            <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
-                Button 
-            </button>
-        </div>
-    </md-sidenav>
-
-    <div class="sidenav-trigger" (mouseenter)="sidenav.open()"></div>
-
-   <app-map></app-map>
-    
-    </md-sidenav-container>
+<app-map></app-map>
     
