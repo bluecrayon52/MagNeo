@@ -8,6 +8,7 @@ import { DataService } from '../../services/data.service'; // Neo4j Data
 })
 export class GraphsComponent implements OnInit {
 
+  // locally hold the layers from the graphDB
   layers: Array<any>; 
 
   constructor(private _dataService: DataService) {

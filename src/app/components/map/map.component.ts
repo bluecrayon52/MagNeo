@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../services/data.service'; // Neo4j Data 
 
 @Component({
   selector: 'app-map',
@@ -10,17 +11,23 @@ export class MapComponent implements OnInit {
   lat: number;
   lng: number;
   style: any;
-  constructor() { 
-    console.log('constructor ran ...');
-  }
+  layers: Array<any>; 
+
+  constructor(private _dataService: DataService) {
+    
+        // Access the Data Service's getLayers() method we defined
+        this._dataService.getLayers()
+            .subscribe(res => this.layers = res.data);
+  
+      }
 
  
 
   ngOnInit() {
     console.log('ngOnInit ran ...');
     this.title = 'This is a Map';
-    this.lat = 51.678418;
-    this.lng = 7.809007;
+    this.lat = 44.836151;   //Bordeaux, France 
+    this.lng = -0.580816;
     this.style = [
       {
           "featureType": "all",
