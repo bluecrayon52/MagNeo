@@ -13,7 +13,8 @@ export class DataService {
 
   getLayers() {
     return this._http.get("/api/layers")
-    .map(result => this.result = result.json().data);
-  }
+    .map(result => this.result = result.json());
 
+  }
+  
 }

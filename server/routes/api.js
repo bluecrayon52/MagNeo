@@ -24,9 +24,17 @@ let response = {
 // Get layers 
 router.get('/layers', (req, res) => {
     session 
-        .run('MATCH(n:Layer) RETURN n LIMIT 25') 
+        .run('MATCH(n:Layer) RETURN n') // return all layers 
         .then((layers) => {
-            response.data = layers;
+            layers.records.forEach((record) => {
+                response.data.push({
+                    name: record._fields[0].properties.name, 
+                    lat: record._fields[0].properties.lat,
+                    long: record._fields[0].properties.long, 
+                    elev: record._fields[0].properties.elev.low 
+                });
+            });
+            
             res.json(response);
         })
         .catch((err) => {
