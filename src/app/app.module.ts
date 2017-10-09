@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule } from '@angular/http';     
 
 import { AppComponent } from './app.component';
 import { UserComponent } from './components/user/user.component';
@@ -38,7 +38,7 @@ import {MdButtonModule, MdCheckboxModule, MdSidenavModule, MdToolbarModule} from
       apiKey: 'AIzaSyCFrdsvRcV562OQXO9BEsibOvTCNYtyUvc'
     })
   ],
-  providers: [DataService],
+  providers: [DataService],   // any component can inject this into their constructor 
   bootstrap: [AppComponent]
 })
 export class AppModule { }
