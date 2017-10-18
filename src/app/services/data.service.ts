@@ -17,4 +17,21 @@ export class DataService {
 
   }
   
+  ///?????????
+  //get Rels(){}
+
+  //setLayer(newNode: object){}
+
+  // set a relationship between two layer nodes 
+  // pass in two layer node names and a relationship object 
+  setRel(node1:string, node2:string, rel:object) {
+
+  }
+
+  // returns a Layer object from the DB that matches the name 
+  getLayer(node: string){} 
+
+  // returns the relationship object, if any, that links the two layer nodes passed in 
+  getRel(node1:string, node2:string){} 
+  
 }
