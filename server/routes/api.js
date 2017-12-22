@@ -47,43 +47,43 @@ router.get('/layers', (req, res) => {
 });
 
 // get a single Layer 
-router.getLayer('/layer', (req, res) => {
+router.get('/layer', (req, res) => {
     session 
         .run('MATCH(n:Layer {name:"' +req.params.node+ '"}) RETRURN n')  
         .then((layer) => {
-                response.data.push({
-                    name: layer.record._fields[0].properties.name, 
-                    lat: layer.record._fields[0].properties.lat,
-                    long: layer.record._fields[0].properties.long, 
-                    elev: layer.record._fields[0].properties.elev.low 
-                });
+            response.data.push({
+                name: layer.record._fields[0].properties.name, 
+                lat: layer.record._fields[0].properties.lat,
+                long: layer.record._fields[0].properties.long, 
+                elev: layer.record._fields[0].properties.elev.low 
+            });
             
             res.json(response);
         })
         .catch((err) => {
             sendError(err, res);
-        });
-   
+        });     
 });
 
-// create a single Relationship
-router.setRel('/rel', (req, res) => {
+// create a single Relationship, '+req.params[0]+', '+req.params[1]+', '+req.params.rel+'
+router.get('/rel', (req, res) => {
     session 
-        .run('MATCH(n1:Layer {name:"' +req.params.node1+ '"})\
-              MATCH(n2:Layer {name:"' +req.params.node2+ '"})\
-              CREATE (n1)-[r:'+req.params.rel+']->(n2)\
+        .run('MATCH(n1:Layer {name:"La Garma"})\
+              MATCH(n2:Layer {name:"Arancou"})\
+              CREATE (n1)-[r:TEST]->(n2)\
               RETURN n1,r,n2')  
         .then((data) => {
-                response.data.push({
-                    data:data       // not sure about formatting just yet  
+                session.close(); 
+                response.data.push({   // exposure at api/rel
+                    data:data     
                 });
-            
-            res.json(response);
+        
+            res.json(response);  // return to dataservice 
         })
-        .catch((err) => {
+        .catch((err) => { 
+            session.close();  
             sendError(err, res);
-        });
-   
+        });   
 });
 
 module.exports = router;

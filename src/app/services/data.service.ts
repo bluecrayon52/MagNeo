@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class DataService {
 
-  result:any;
+  result:any; 
 
   constructor(private _http: Http) {
     console.log('Data service connected...');
@@ -23,15 +23,20 @@ export class DataService {
   //setLayer(newNode: object){}
 
   // set a relationship between two layer nodes 
-  // pass in two layer node names and a relationship object 
-  setRel(node1:string, node2:string, rel:object) {
-
+  // pass in two layer node names and a relationship object , node1:string, node2:string, rel:object
+  setRel() {
+    return this._http.get("/api/rel")   // return something for testing purposes 
+    .map(result => this.result = result.json()); 
   }
 
   // returns a Layer object from the DB that matches the name 
-  getLayer(node: string){} 
+  getLayer(node: string){
+
+  } 
 
   // returns the relationship object, if any, that links the two layer nodes passed in 
-  getRel(node1:string, node2:string){} 
+  getRel(node1:string, node2:string){
+
+  } 
   
 }

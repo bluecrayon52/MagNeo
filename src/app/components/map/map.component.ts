@@ -12,12 +12,16 @@ export class MapComponent implements OnInit {
   lng: number;
   style: any;
   layers: Array<any>; 
-
+  testing: Array<any>;
   constructor(private _dataService: DataService) {
     
         // Access the Data Service's getLayers() method we defined
         this._dataService.getLayers()
             .subscribe(res => this.layers = res.data);
+            
+        this._dataService.setRel()
+            .subscribe(res => this.layers = res.data); 
+            console.log(this.testing); 
   
       }
 

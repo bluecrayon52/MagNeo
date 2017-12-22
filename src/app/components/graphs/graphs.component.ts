@@ -10,7 +10,7 @@ export class GraphsComponent implements OnInit {
 
   // locally hold the layers from the graphDB
   layers: Array<any>; 
-
+  
   constructor(private _dataService: DataService) {
     
         // Access the Data Service's getLayers() method we defined
@@ -20,7 +20,7 @@ export class GraphsComponent implements OnInit {
       }
     
   ngOnInit() { 
-
+   
   }
 
 
