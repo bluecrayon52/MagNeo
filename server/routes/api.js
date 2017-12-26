@@ -71,7 +71,7 @@ router.get('/rel', (req, res) => {
         .run('MATCH(n1:Layer {name:"La Garma"})\
               MATCH(n2:Layer {name:"Arancou"})\
               CREATE (n1)-[r:TEST]->(n2)\
-              RETURN n1,r,n2')  
+              RETURN n1,r,n2')   // RETURN n1,r,n2'
         .then((data) => {
                 session.close(); 
                 response.data.push({   // exposure at api/rel
