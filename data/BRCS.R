@@ -34,13 +34,13 @@ per <- as.integer(choose.per())  # converting input to integer
 
 # If user selects counts, convert data to percents and run simulation
 if (per == 2) {
-br.tab <- prop.table(as.matrix(br.tab1),1)*100  #turn data table into matrix, convert to proportions (by row, multiply by 100 to get percents
+br.tab <- prop.table(as.matrix(br.tab1),1)*100  #turn data table into matrix, convert to proportions (by row) multiply by 100 to get percents
 br.dat <- BR(br.tab) # actual BR values, returns a matrix (row X row)
 
 # Calculate the proportions of each category in the original data table
 c.sum <- matrix(0,1,ncol(br.tab1)) # create an empty matrix with 1 row and n columns based on loaded table columns 
 for (i in 1:ncol(br.tab1)) {
-    c.temp <- sum(br.tab1[,i]) # add all entries of each column
+    c.temp <- sum(br.tab1[,i]) # add up all entries of each column
     c.sum[,i] <- c.temp #put sum in matrix
 }
 p.grp <- prop.table(c.sum) # get proportions of sum matrix 
