@@ -19,7 +19,7 @@ BR <- function(x) {
     }
     # name matrix sides 
     row.names(results) <- row.names(x)
-    colnames(results) <- row.names(x)
+    
 
     return(results)
 }
