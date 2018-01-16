@@ -1,0 +1,31 @@
+<md-sidenav-container class="sidenav-container">
+  <md-sidenav #sidenav class="sidenav" (mouseleave)="sidenav.close()">
+      Side Nav For Map 
+      <div class='card'> 
+          <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+              CLick Select 
+          </button>
+          <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+              Draw Polygon
+          </button>
+          <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+              Button 
+          </button>
+          <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+              Button 
+          </button>
+      </div>
+  </md-sidenav>
+
+  <div class="sidenav-trigger" (mouseenter)="sidenav.open()"></div>
+
+<!-- map centered on Bordeaux France, with zoom level (out < in)  -->
+<agm-map id="map" [latitude]="lat" [longitude]="lng" [styles]="style" [zoom]= '6'>
+    <ng-container *ngFor="let layer of layers">
+        <ng-container *ngIf="layer.lat !== -1 && layer.long !== -1">
+            <agm-marker [latitude]="layer.lat" [longitude]="layer.long"></agm-marker>
+        </ng-container>
+    </ng-container>
+</agm-map>
+
+</md-sidenav-container>
