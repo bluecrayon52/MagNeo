@@ -4,7 +4,7 @@ FloatProperty, UniqueIdProperty, StructuredRel, Relationship, RelationshipTo, Re
 
 # config.DATABASE_URL = 'bolt://neo4j:magneo@localhost:7687'
 
-# metadata for artifact relationship
+# metadata for artifact relationship with a layer 
 class LocationRel(StructuredRel):
     # array of m number of motifs and their counts each
     motifs = ArrayProperty(IntegerProperty(default = 0))
@@ -12,9 +12,9 @@ class LocationRel(StructuredRel):
 class Artifact(StructuredNode):
     uid = UniqueIdProperty()
     kind = StringProperty(unique_index=True, required=True) 
-    location = RelationshipTo('Layer', 'FOUND', model= LocationRel, cardinality=OneOrMore) # motif counts are for only one Layer
+    location = RelationshipTo('Layer', 'FOUND', model= LocationRel, cardinality=OneOrMore)
 
-# relationship model 
+# metadata for relationships between layers  
 class SimilarityRel(StructuredRel):
     kind = StringProperty(unique_index=True, required=True)
     coefficient = FloatProperty(required=True)
@@ -37,4 +37,4 @@ class Layer(StructuredNode):
 
     # directionless relationship
     similarity = Relationship('Layer', 'SIMILAR_TO', model=SimilarityRel) # one similarity between each layer node pair per artifact type 
-    # artifact = RelationshipTo('Artifact', 'ARTIFACT', cardinality=OneOrMore)
+
