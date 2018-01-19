@@ -1,4 +1,4 @@
-from django.db import models
+# from django.db import models
 from neomodel import (config, StructuredNode, StringProperty, ArrayProperty, IntegerProperty, 
 FloatProperty, UniqueIdProperty, StructuredRel, Relationship, RelationshipTo, RelationshipFrom, OneOrMore, One)
 
@@ -12,14 +12,17 @@ class LocationRel(StructuredRel):
 class Artifact(StructuredNode):
     uid = UniqueIdProperty()
     kind = StringProperty(unique_index=True, required=True) 
-    location = RelationshipTo('Layer', 'FOUND', model= LocationRel, cardinality=OneOrMore)
+    location = RelationshipTo('Layer', 'FOUND', model= LocationRel)
+
+    def _str_(self):
+        return self.kind
 
 # metadata for relationships between layers  
 class SimilarityRel(StructuredRel):
-    kind = StringProperty(unique_index=True, required=True)
+    kind = StringProperty(required=True)
     coefficient = FloatProperty(required=True)
-     # mark the relationship with the artifact(s) used to calculate the coefficient
-    artifacts = ArrayProperty(Artifact, required=True)
+     # mark the relationship with the artifact(s) kind used to calculate the coefficient
+    artifacts = ArrayProperty(StringProperty(), required=True)
 
 class Layer(StructuredNode):
     uid = UniqueIdProperty()
@@ -37,4 +40,8 @@ class Layer(StructuredNode):
 
     # directionless relationship
     similarity = Relationship('Layer', 'SIMILAR_TO', model=SimilarityRel) # one similarity between each layer node pair per artifact type 
+
+    def _str_(self):
+        return self.name
+
 
