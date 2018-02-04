@@ -1,6 +1,9 @@
 # from django.db import models
+from django.forms import ModelForm
+from django_neomodel import DjangoNode
 from neomodel import (config, StructuredNode, StringProperty, ArrayProperty, IntegerProperty, 
 FloatProperty, UniqueIdProperty, StructuredRel, Relationship, RelationshipTo, RelationshipFrom, OneOrMore, One)
+
 
 # config.DATABASE_URL = 'bolt://neo4j:magneo@localhost:7687'
 
@@ -9,7 +12,7 @@ class LocationRel(StructuredRel):
     # array of m number of motifs and their counts each
     motifs = ArrayProperty(IntegerProperty(default = 0))
 
-class Artifact(StructuredNode):
+class Artifact(DjangoNode):
     uid = UniqueIdProperty()
     kind = StringProperty(unique_index=True, required=True) 
     location = RelationshipTo('Layer', 'FOUND', model= LocationRel)
