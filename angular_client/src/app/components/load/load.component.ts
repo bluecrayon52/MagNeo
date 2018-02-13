@@ -43,8 +43,8 @@ export class LoadComponent implements OnInit {
     // pass fileString allong to a parser to be sent to server
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
-    const array = this.fileString.split('\n');
-    console.log(array[1]);
+    const dataArray = this.fileString.split('\n');
+    console.log(dataArray[1]);
   }
 
 }
