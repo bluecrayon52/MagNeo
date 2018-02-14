@@ -100,23 +100,29 @@ class LayersView(GRest):
             "similarity": "layer_id"
         }
     }
-
+ 
+    # route for getting all the similar layers of a given layer 
     @route("/<layer_id>/similar", methods=["GET"])
     def similar(self, layer_id):
         try:
             layer = Layer.nodes.get(**{self.__selection_field__.get("primary"):
                                    str(markupsafe.escape(layer_id))})
-
+            # if the layer exists 
             if (layer):
+                # get the similarity relationship 
                 similar_layers = layer.similarity.get()
+
+                # if there are similar layers 
                 if (similar_layers):
+
+                    # return them as a json dictionary 
                     return jsonify(similar=similar_layers.to_dict()), 200
                 else:
-                    return jsonify(errors=["Selected layer is not similar to anything!"]), 404
+                    return jsonify(errors=["Selected layer has no similarity relationships."]), 404
             else:
                 return jsonify(errors=["Selected layer does not exists!"]), 404
         except:
-            return jsonify(errors=["An error occurred while processing your request."]), 500
+            return jsonify(errors=["An error occurred while attempting to get the layer similarity."]), 500
         
 # class PersonsView(GRest):
 #     """Person's View (/persons)"""
@@ -145,16 +151,23 @@ class ArtifactsView(GRest):
         }
     }
 
-    @route("/<pet_id>/owner", methods=["GET"])
-    def owner(self, pet_id):
+    # route for getting all locations of a given artifact 
+    @route("/<artifact_id>/locations", methods=["GET"])
+    def locations(self, artifact_id):
         try:
-            pet = Pet.nodes.get(**{self.__selection_field__.get("primary"):
-                                   str(markupsafe.escape(pet_id))})
+            artifact = Artifact.nodes.get(**{self.__selection_field__.get("primary"):
+                                   str(markupsafe.escape(artifact_id))})
+            # if the artifact exists 
+            if (artifact):
 
-            if (pet):
-                current_owner = pet.owner.get()
-                if (current_owner):
-                    return jsonify(owner=current_owner.to_dict()), 200
+                # get the location relationship
+                current_locations = artifact.location.get()
+
+                # if there are locations
+                if (current_locations):
+
+                    # return them as a json dictionary 
+                    return jsonify(locations=current_locations.to_dict()), 200
                 else:
                     return jsonify(errors=["Selected pet has not been adopted yet!"]), 404
             else:

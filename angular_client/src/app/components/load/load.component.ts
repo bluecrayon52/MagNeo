@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import { DataService } from '../../services/data.service'; // Neo4j Data
 
 @Component({
   selector: 'app-load',
@@ -10,9 +11,10 @@ export class LoadComponent implements OnInit {
 
   public fileString;
 
-  constructor(public activeModal: NgbActiveModal) {
+  constructor(public activeModal: NgbActiveModal, private _dataService: DataService) {
     // tslint:disable-next-line:no-unused-expression
     this.fileString;
+
    }
 
    ngOnInit() {
@@ -30,9 +32,9 @@ export class LoadComponent implements OnInit {
 
     myReader.onloadend = (e) => {
         // myReader.result is a String of the uploaded file
-        console.log(myReader.result);
+        // console.log(myReader.result);
         this.fileString = myReader.result;
-        console.log('give me some space');
+        console.log('Data Preview');
         console.log(this.fileString);
     };
 
@@ -40,11 +42,12 @@ export class LoadComponent implements OnInit {
   }
 
   submit(): void {
-    // pass fileString allong to a parser to be sent to server
+    // pass fileString along to service to be sent to server
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
-    const dataArray = this.fileString.split('\n');
-    console.log(dataArray[1]);
+    const dataArray = this.fileString.split(',');
+    this._dataService.createGraph(dataArray);
+    // console.log(dataArray[1]);
   }
 
 }

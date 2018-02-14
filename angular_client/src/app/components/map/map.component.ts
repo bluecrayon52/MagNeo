@@ -13,6 +13,7 @@ export class MapComponent implements OnInit {
   style: any;
   layers: Array<any>;
   testing: Array<any>;
+
   constructor(private _dataService: DataService) {
 
         // Access the Data Service's getLayers() method we defined

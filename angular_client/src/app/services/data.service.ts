@@ -10,6 +10,17 @@ export class DataService {
   constructor(private _http: Http) {
     console.log('Data service connected...');
   }
+  createGraph(data) {
+    console.log('The data is in good hands now!');
+    console.log(data);
+
+    // parse data
+
+    // create artifact
+
+    // for each layer in data
+
+  }
 
   getLayers() {
     return this._http.get('/api/layers')
