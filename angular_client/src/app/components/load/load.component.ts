@@ -45,9 +45,7 @@ export class LoadComponent implements OnInit {
     // pass fileString along to service to be sent to server
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
-    const dataArray = this.fileString.split(',');
-    this._dataService.createGraph(dataArray);
-    // console.log(dataArray[1]);
+    this._dataService.createGraph(this.fileString);
   }
 
 }

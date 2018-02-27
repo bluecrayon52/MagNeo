@@ -7,7 +7,7 @@ import markupsafe
 import neomodel
 from neomodel import (StructuredNode, StringProperty, IntegerProperty,
                       UniqueIdProperty, RelationshipFrom, RelationshipTo,
-                      StructuredRel)
+                      StructuredRel, ArrayProperty, FloatProperty)
 from webargs import fields
 from grest import GRest, utils, global_config
 
@@ -39,7 +39,7 @@ class SimilarityRel(StructuredRel, utils.Relation):
     artifacts = ArrayProperty(StringProperty(), required=True)
 
 class Layer(StructuredNode, utils.Node):
-     __validation_rules__ = {
+    __validation_rules__ = {
         "name": fields.Str(),
         "lat": fields.Str(),
         "lon": fields.Str(),
@@ -47,7 +47,7 @@ class Layer(StructuredNode, utils.Node):
         "age": fields.Str(),  
     }
 
-     __filtered_fields__ = ["secret_field"]
+    __filtered_fields__ = ["secret_field"]
 
     layer_id = UniqueIdProperty()
     name = StringProperty(unique_index=True, required=True)

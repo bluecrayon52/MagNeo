@@ -6,7 +6,7 @@
 </div>
 <div class="modal-body">
   <p>Please select a file to Upload:</p>
-  <input type="file" id="file-input" (change)="changeListener($event)" #input />
+  <input type="file" id="file-input" (change)="changeListener($event)" #input accept=".csv"/>
   <pre id="file-content"></pre>  
 </div>
 <div class="modal-footer">
