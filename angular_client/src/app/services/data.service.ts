@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class DataService {
 
-  private BASE_URL = 'http://localhost:5000/';
+  private BASE_URL = 'http://localhost:5000';
   private headers: Headers = new Headers({'Content-Type': 'application/json'});
 
   result: any;
@@ -13,6 +13,7 @@ export class DataService {
   constructor(private _http: Http) {
     console.log('Data service connected...');
   }
+
   createGraph(data) {
     console.log('The data is in good hands now!');
     const layers = data.split('\r');
@@ -39,40 +40,30 @@ export class DataService {
       console.log(layer);
 
       const url = `${this.BASE_URL}/layers`;
-      this._http.post(url, layer, {headers: this.headers});
-      // create a new layer with info in layer[0]-layer[4]
+      const layerData = {
+        'name': layer[0],
+        'lat': layer[1],
+        'lon': layer[2],
+        'elev': layer[3],
+        'age': layer[4]
+        };
 
-      // layer[0] = name
+      const body = JSON.stringify(layerData);
+      console.log(body);
+      this._http.post(url, body, {headers: this.headers})
+      .subscribe(() => {},
+                  err => console.log(err)
+      );
 
-      // layer[1] = lat
-
-      // layer[2] = lon
-
-      // layer[3] = elev
-
-      // layer[4] = age
     }
 
-    // parse data
-
-    // create artifact
-
-    // for each layer in data
-      // createLayer(json)
-
   }
-
 
   getLayers() {
-    return this._http.get('/api/layers')
+    const url = `${this.BASE_URL}/layers`;
+    return this._http.get(url)
     .map(result => this.result = result.json());
-
   }
-
-  ///?????????
-  // get Rels(){}
-
-  // setLayer(newNode: object){}
 
   // set a relationship between two layer nodes
   // pass in two layer node names and a relationship object , node1:string, node2:string, rel:object

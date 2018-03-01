@@ -19,7 +19,6 @@ export class MapComponent implements OnInit {
         // Access the Data Service's getLayers() method we defined
         this._dataService.getLayers()
             .subscribe(res => this.layers = res.data);
-
       }
 
 

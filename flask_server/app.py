@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 import os
 from flask import Flask, jsonify
+from flask_cors import CORS,cross_origin
 from flask_classful import route
 import markupsafe
 import neomodel
@@ -179,10 +180,13 @@ class ArtifactsView(GRest):
 def create_app():
     # The Flask app
     app = Flask(__name__)
+    CORS(app)
+
+    logging.getLogger('flask_cors').level = logging.DEBUG
 
     @app.route('/')
     def index():
-        return "Hello World"
+        return "MagNeo Server"
 
     neomodel.config.DATABASE_URL = 'bolt://neo4j:magneo@localhost:7687'
     neomodel.config.AUTO_INSTALL_LABELS = True
