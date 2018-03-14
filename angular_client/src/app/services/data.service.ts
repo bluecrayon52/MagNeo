@@ -18,12 +18,13 @@ export class DataService {
     console.log('The data is in good hands now!');
     const layers = data.split('\r');
     console.log('CSV header: ' + layers[0]);
-
-    // create a new artifact
+    console.log ('layers: ' + layers);
+    const allMotifs = [];
 
     // create layers
     for (let i = 1; i < layers.length; i++) {
       const layer = layers[i].split(',');
+      const someMotifs = [];
 
       // skip layers with incomplete data
       let check = 0;
@@ -36,6 +37,14 @@ export class DataService {
       if ( check === 1) {
         continue;
       }
+
+      // drop metadata from layers
+      someMotifs.push(layer[0]);  //  add the layer name
+      const tempMotifs = layer.slice(5);
+      for (let j = 0; j < tempMotifs.length; j++) { // add motif counts
+        someMotifs.push(tempMotifs[j]);
+      }
+      allMotifs.push(someMotifs);
 
       console.log(layer);
 
@@ -56,7 +65,45 @@ export class DataService {
       );
 
     }
+    // TODO: create a new artifact
+    // get the mitif count data
+    const allMotifsAgain = [];
+    console.log('allMotifs: ' + allMotifs);
+    for (let i = 0; i < allMotifs.length; i++) {
+      const someMotifs = allMotifs[i];
+      const motifArray = someMotifs.slice(1);
+      const motifInts = [];
 
+      // convert strings to integers
+      for (let j = 0; j < motifArray.length; j++) {
+       motifInts.push(parseInt(motifArray[j], 10));
+      }
+
+      const layerMotifs = {
+        'name': someMotifs[0],
+        'motifs': motifInts,
+      };
+
+      allMotifsAgain.push(layerMotifs);
+
+      // const chunk = JSON.stringify(layerMotifs);
+      // console.log('chunk: ' + chunk);
+    }
+    const url = `${this.BASE_URL}/layers/brcs`;
+
+    const tempChunk = {
+      'layers': allMotifsAgain
+    };
+
+    const bigChunk = JSON.stringify(tempChunk);
+    console.log('bigChunk: ' + bigChunk);
+    this._http.post(url, bigChunk, {headers: this.headers})
+      .subscribe(() => {},
+                  err => console.log(err)
+      );
+    // pass only layer names and motif counts to flask REST API in a chunk
+    // const chunk = JSON.stringify(allMotifs);
+    // console.log('chunk: ' + chunk);
   }
 
   getLayers() {

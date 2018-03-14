@@ -1,7 +1,9 @@
+from __future__ import print_function 
+import sys
 import logging
 import logging.handlers
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS,cross_origin
 from flask_classful import route
 import markupsafe
@@ -13,24 +15,14 @@ from webargs import fields
 from grest import GRest, utils, global_config
 
 # metadata for artifact relationship with a layer 
-class LocationRel(StructuredRel, utils.Relation):
+class motifRel(StructuredRel, utils.Relation):
     # array of m number of motifs and their counts each
     motifs = ArrayProperty(IntegerProperty(default = 0))
-
-# class PetInfo(StructuredRel, utils.Relation):
-#     """Pet Information Model (for relationship)"""
-#     adopted_since = IntegerProperty()
 
 class Artifact(StructuredNode, utils.Node):
     artifact_id = UniqueIdProperty()
     kind = StringProperty(unique_index=True, required=True) 
-    location = RelationshipTo('Layer', 'FOUND', model= LocationRel)
 
-# class Pet(StructuredNode, utils.Node):
-#     """Pet model"""
-#     pet_id = UniqueIdProperty()
-#     name = StringProperty()
-#     owner = RelationshipFrom("Person", "HAS_PET")
 
 # metadata for relationships between layers  
 class SimilarityRel(StructuredRel, utils.Relation):
@@ -65,43 +57,40 @@ class Layer(StructuredNode, utils.Node):
 
     secret_field = StringProperty(default="secret", required=False)
 
-    # directionless relationship
+    # relationship to other Layers 
     similarity = RelationshipTo('Layer', 'SIMILAR_TO', model=SimilarityRel) # one similarity between each layer node pair per artifact type 
 
-# class Person(StructuredNode, utils.Node):
-#     """Person model"""
-#     __validation_rules__ = {
-#         "first_name": fields.Str(),
-#         "last_name": fields.Str(),
-#         "phone_number": fields.Str(required=True)
-#     }
-
-#     __filtered_fields__ = ["secret_field"]
-
-#     uid = UniqueIdProperty()
-#     first_name = StringProperty()
-#     last_name = StringProperty()
-#     phone_number = StringProperty(unique_index=True, required=True)
-
-#     secret_field = StringProperty(default="secret", required=False)
-
-#     pets = RelationshipTo(Pet, "HAS_PET", model=PetInfo)
+    # relationship to Artifacts
+    motifs = RelationshipTo('Artifact', 'FOUND', model= motifRel)
 
 class LayersView(GRest):
     # Layer View (/layers)
     __model__ = {
         "primary": Layer,
         "secondary": {
-            "similarity": Layer
+            "similarity": Layer,
+            "motifs": Artifact
         }
     }
     __selection_field__ = {
         "primary": "layer_id",
         "secondary": {
-            "similarity": "layer_id"
+            "similarity": "layer_id",
+            "motifs": "artifact_id"
         }
     }
- 
+    
+    # route for calling brcs, making a new Artifact with LocactionRel, 
+    # find Layer by name, make SimilarityRel based on brcs matrix 
+    @route("/brcs", methods=["POST"])
+    def brcs(self):
+        req_data = request.get_json()
+        if 'layers' in req_data:
+            layers = req_data['layers']
+
+        print(layers, file=sys.stderr)
+        return 'Hello!'
+
     # route for getting all the similar layers of a given layer 
     @route("/<layer_id>/similar", methods=["GET"])
     def similar(self, layer_id):
@@ -125,16 +114,6 @@ class LayersView(GRest):
         except:
             return jsonify(errors=["An error occurred while attempting to get the layer similarity."]), 500
         
-# class PersonsView(GRest):
-#     """Person's View (/persons)"""
-#     __model__ = {"primary": Person,
-#                  "secondary": {
-#                      "pets": Pet
-#                  }}
-#     __selection_field__ = {"primary": "uid",
-#                            "secondary": {
-#                                "pets": "pet_id"
-#                            }}
 
 
 class ArtifactsView(GRest):
@@ -142,13 +121,11 @@ class ArtifactsView(GRest):
     __model__ = {
         "primary": Artifact,
         "secondary": {
-            "location": Layer
         }
     }
     __selection_field__ = {
         "primary": "artifact_id",
         "secondary": {
-            "location": "layer_id"
         }
     }
 
