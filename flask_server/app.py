@@ -1,8 +1,10 @@
-from __future__ import print_function 
-import sys
+from __future__ import print_function # for printing to console 
+import sys  # for printing to console
+import pandas as pd # for converting JSON to dataframe
 import logging
 import logging.handlers
 import os
+from brcs import brcs # import thee function that give the similarity matrix 
 from flask import Flask, jsonify, request
 from flask_cors import CORS,cross_origin
 from flask_classful import route
@@ -87,9 +89,46 @@ class LayersView(GRest):
         req_data = request.get_json()
         if 'layers' in req_data:
             layers = req_data['layers']
+            layersDF = pd.DataFrame(layers)
+            layersDF.set_index('name', inplace=True)
+            layersDF.reset_index(inplace=True)
+            numOMos = len(layersDF.ix[0,1]) # number of motifs 
 
-        print(layers, file=sys.stderr)
+            # compile the column names
+            colNames = ['name']
+            for i in range(0,numOMos):
+                col = 'mitif_%d' % i
+                colNames.append(col)
+            
+            # initialize an empty df with the right col names 
+            layersDF2 = pd.DataFrame(columns=colNames)
+
+            # populate the new df
+            for index, row in layersDF.iterrows():
+                newRow = [row['name']]
+                for mo in row['motifs']:
+                    newRow.append(mo)
+                layersDF2.loc[index] = newRow
+
+            # convert names to string
+            layersDF2['name'] = layersDF2['name'].astype(str)
+
+            # convert motifs to int64
+            for col in layersDF2.columns:
+                if col == 'name':
+                    continue 
+                layersDF2[col] = layersDF2[col].astype(str).astype(int)
+
+
+        print(layersDF2, file=sys.stderr)
+        print(layersDF2.dtypes, file=sys.stderr)
+        simMatrix = brcs(layersDF2, True)
+        
+        # convert layers JSON to dataframe and pass to brcs 
         return 'Hello!'
+
+
+
 
     # route for getting all the similar layers of a given layer 
     @route("/<layer_id>/similar", methods=["GET"])
