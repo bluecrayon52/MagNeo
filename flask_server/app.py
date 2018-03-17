@@ -28,10 +28,10 @@ class Artifact(StructuredNode, utils.Node):
 
 # metadata for relationships between layers  
 class SimilarityRel(StructuredRel, utils.Relation):
-    kind = StringProperty(required=True)
+    kind = StringProperty()    # required=True
     coefficient = FloatProperty(required=True)
      # mark the relationship with the artifact(s) kind used to calculate the coefficient
-    artifacts = ArrayProperty(StringProperty(), required=True)
+    artifacts = ArrayProperty(StringProperty()) # required=True 
 
 class Layer(StructuredNode, utils.Node):
     __validation_rules__ = {
@@ -75,9 +75,9 @@ class LayersView(GRest):
         }
     }
     __selection_field__ = {
-        "primary": "layer_id",
+        "primary": "name",
         "secondary": {
-            "similarity": "layer_id",
+            "similarity": "name",
             "motifs": "artifact_id"
         }
     }
@@ -86,48 +86,69 @@ class LayersView(GRest):
     # find Layer by name, make SimilarityRel based on brcs matrix 
     @route("/brcs", methods=["POST"])
     def brcs(self):
-        req_data = request.get_json()
-        if 'layers' in req_data:
-            layers = req_data['layers']
-            layersDF = pd.DataFrame(layers)
-            layersDF.set_index('name', inplace=True)
-            layersDF.reset_index(inplace=True)
-            numOMos = len(layersDF.ix[0,1]) # number of motifs 
+        try: 
+            req_data = request.get_json()
+            if 'layers' in req_data:
+                layers = req_data['layers']
+                layersDF = pd.DataFrame(layers)
+                layersDF.set_index('name', inplace=True)
+                layersDF.reset_index(inplace=True)
+                numOMos = len(layersDF.ix[0,1]) # number of motifs 
 
-            # compile the column names
-            colNames = ['name']
-            for i in range(0,numOMos):
-                col = 'mitif_%d' % i
-                colNames.append(col)
+                # compile the column names
+                colNames = ['name']
+                for i in range(0,numOMos):
+                    col = 'mitif_%d' % i
+                    colNames.append(col)
+                
+                # initialize an empty df with the right col names 
+                layersDF2 = pd.DataFrame(columns=colNames)
+
+                # populate the new df
+                for index, row in layersDF.iterrows():
+                    newRow = [row['name']]
+                    for mo in row['motifs']:
+                        newRow.append(mo)
+                    layersDF2.loc[index] = newRow
+
+                # convert names to string
+                layersDF2['name'] = layersDF2['name'].astype(str)
+
+                # convert motifs to int64
+                for col in layersDF2.columns:
+                    if col == 'name':
+                        continue 
+                    layersDF2[col] = layersDF2[col].astype(str).astype(int)
+
+                simMatrix = brcs(layersDF2, True)
+                dim = len(simMatrix.index) # dimension of matrix
+
+                # iterate over the top right half of the matrix 
+                for row in range(0, dim - 1):
+                    layerFromName = simMatrix.index[row]
+                    layerFrom = Layer.nodes.get(**{self.__selection_field__.get("primary"): str(layerFromName)})
+                    if (layerFrom):
             
-            # initialize an empty df with the right col names 
-            layersDF2 = pd.DataFrame(columns=colNames)
+                        for col in range(row + 1, dim):
+                            layerToName = simMatrix.columns[col]
+                            layerTo = Layer.nodes.get(**{self.__selection_field__.get("primary"): str(layerToName)})
+                            value = simMatrix.ix[row,col]
 
-            # populate the new df
-            for index, row in layersDF.iterrows():
-                newRow = [row['name']]
-                for mo in row['motifs']:
-                    newRow.append(mo)
-                layersDF2.loc[index] = newRow
+                            if (layerTo):
+                                if (value!=0):
+                                    json_data = {"kind":"BR", "coefficient": value, "artifacts":["horse"]}
+                                    similarity = layerFrom.similarity.connect(layerTo, json_data)
+                            else:
+                                return jsonify(errors=["layerTo: "+str(layerToName)+" does not exist as a node in the graph."]), 404
+                    else: 
+                        return jsonify(errors=["layerFrom: "+str(layerFromName)+" does not exist as a node in the graph."]), 404
+            else: 
+                return jsonify(errors=["The request data has no 'layers' attribute."]), 404
 
-            # convert names to string
-            layersDF2['name'] = layersDF2['name'].astype(str)
+            return jsonify(result="OK"), 200
 
-            # convert motifs to int64
-            for col in layersDF2.columns:
-                if col == 'name':
-                    continue 
-                layersDF2[col] = layersDF2[col].astype(str).astype(int)
-
-
-        print(layersDF2, file=sys.stderr)
-        print(layersDF2.dtypes, file=sys.stderr)
-        simMatrix = brcs(layersDF2, True)
-        
-        # convert layers JSON to dataframe and pass to brcs 
-        return 'Hello!'
-
-
+        except:
+            return jsonify(errors=["An error occurred while attempting to calculate layer similarity."]), 500
 
 
     # route for getting all the similar layers of a given layer 
