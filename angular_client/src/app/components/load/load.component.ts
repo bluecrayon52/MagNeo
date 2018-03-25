@@ -8,6 +8,7 @@ import { DataService } from '../../services/data.service'; // Neo4j Data
   styleUrls: ['./load.component.css']
 })
 export class LoadComponent implements OnInit {
+  message: boolean;
 
   public fileString;
 
@@ -18,6 +19,7 @@ export class LoadComponent implements OnInit {
    }
 
    ngOnInit() {
+     this._dataService.currentMessage.subscribe(message => this.message = message);
   }
 
    changeListener($event): void {
@@ -46,6 +48,7 @@ export class LoadComponent implements OnInit {
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
     this._dataService.createGraph(this.fileString);
+    this._dataService.changeMessage(true);
   }
 
 }

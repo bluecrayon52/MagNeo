@@ -22,9 +22,11 @@
 <!-- map centered on Bordeaux France, with zoom level (out < in)  -->
 <agm-map id="map" [latitude]="lat" [longitude]="lng" [styles]="style" [zoom]= '6'>
     <ng-container *ngFor="let layer of layers">
-        <ng-container *ngIf="layer.lat !== -1 && layer.lon !== -1">
-            <agm-marker [latitude]="layer.lat" [longitude]="layer.lon"></agm-marker>
-        </ng-container>
+            <agm-marker [latitude]="layer.lat" [longitude]="layer.lon" [title]="layer.name" [opacity]="1" iconUrl="https://maps.google.com/mapfiles/ms/icons/blue.png">
+                <agm-info-window>
+                    <strong>{{layer.name}}</strong>
+                  </agm-info-window>
+            </agm-marker>
     </ng-container>
 </agm-map>
 

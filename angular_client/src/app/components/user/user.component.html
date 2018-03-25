@@ -10,20 +10,21 @@
     <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" (click)="open()">
         Load Data 
     </button>
-    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" (click)="viewGraph()">
         Graph View 
     </button>
-    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" (click)="viewMap()">
         Map View 
     </button>
-    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave" >
+    <button type="button" class="btn btn-outline-secondary"  triggers="mouseenter:mouseleave">
         Logout 
     </button>
   </md-toolbar-row>
   
 </md-toolbar>
 
- <app-map></app-map> 
+ <app-map *ngIf=viewM></app-map> 
+ <app-graphs *ngIf=viewG></app-graphs>
 
 <!-- define button that enables switching to graph veiw when two or more nodes are selected -->
 <!-- <app-graphs></app-graphs>  -->

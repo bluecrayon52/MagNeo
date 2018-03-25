@@ -14,14 +14,17 @@ export class GraphsComponent implements OnInit {
   constructor(private _dataService: DataService) {
 
         // Access the Data Service's getLayers() method we defined
-        this._dataService.getLayers()
-            .subscribe(res => this.layers = res.data);
+        // this._dataService.getLayers()
+        //     .subscribe(res => this.layers = res.data);
 
       }
 
   ngOnInit() {
+    this._dataService.getLayers().subscribe(resp => {
+      this.layers = resp.layers;
+      console.log('[graph.components.ts]: ngOnInit() getLayers() response:' + resp.layers);
+    });
 
   }
-
 
 }

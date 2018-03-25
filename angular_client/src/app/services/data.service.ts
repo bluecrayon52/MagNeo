@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class DataService {
 
+  private messageSource = new BehaviorSubject<boolean>(false);
+  currentMessage = this.messageSource.asObservable();
+
   private BASE_URL = 'http://localhost:5000';
   private headers: Headers = new Headers({'Content-Type': 'application/json'});
-
   result: any;
 
   constructor(private _http: Http) {
     console.log('Data service connected...');
   }
 
+  changeMessage(message: boolean) {
+    this.messageSource.next(message);
+  }
   createGraph(data) {
     console.log('The data is in good hands now!');
     const layers = data.split('\r');
@@ -86,8 +92,6 @@ export class DataService {
 
       allMotifsAgain.push(layerMotifs);
 
-      // const chunk = JSON.stringify(layerMotifs);
-      // console.log('chunk: ' + chunk);
     }
     const url = `${this.BASE_URL}/layers/brcs`;
 
@@ -101,15 +105,13 @@ export class DataService {
       .subscribe(() => {},
                   err => console.log(err)
       );
-    // pass only layer names and motif counts to flask REST API in a chunk
-    // const chunk = JSON.stringify(allMotifs);
-    // console.log('chunk: ' + chunk);
   }
 
   getLayers() {
     const url = `${this.BASE_URL}/layers`;
-    return this._http.get(url)
-    .map(result => this.result = result.json());
+    console.log('[data.service.ts]: getLayers url:' + url);
+    // this._http.get(url, {headers: this.headers}).subscribe(res => console.log(res));
+    return this._http.get(url, {headers: this.headers}).map(response => response.json());
   }
 
   // set a relationship between two layer nodes

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input } from '@angular/core';
 import { DataService } from '../../services/data.service'; // Neo4j Data
 
 @Component({
@@ -8,24 +8,41 @@ import { DataService } from '../../services/data.service'; // Neo4j Data
 })
 export class MapComponent implements OnInit {
   title: string;
-  lat: number;
-  lng: number;
-  style: any;
-  layers: Array<any>;
-  testing: Array<any>;
+  lat:      number;
+  lng:      number;
+  style:    any;
+  layers:   Array<Object>;
+
+  @Input() message: boolean;
 
   constructor(private _dataService: DataService) {
 
         // Access the Data Service's getLayers() method we defined
-        this._dataService.getLayers()
-            .subscribe(res => this.layers = res.data);
+        // this._dataService.getLayers().subscribe(resp => {
+        //     this.layers = resp.layers;
+        //     console.log('[map.components.ts]: constructor getLayers response:' + resp.layers);
+        //     });
+
+        // console.log('[map.components.ts] constructor this.layers: ' + this.layers);
       }
 
-
-
   ngOnInit() {
-    // this._dataService.setRel()
-    // .subscribe(res => this.layers = res.data);
+    this._dataService.currentMessage.subscribe(message => this.doSomething(message));
+      this.initMap();
+  }
+
+  doSomething(message) {
+      console.log('[map.component.ts]: doSomething message: ' + message);
+      this.initMap();
+    }
+
+  initMap() {
+    // this._dataService.currentMessage.subscribe(message => this.message = message);
+    // this._dataService.currentMessage.subscribe(message => this.doSomething(message));
+    this._dataService.getLayers().subscribe(resp => {
+        this.layers = resp.layers;
+        console.log('[map.components.ts]: initMap() getLayers() response:' + resp.layers);
+        });
 
     console.log('ngOnInit ran ...');
     this.title = 'This is a Map';
@@ -226,8 +243,5 @@ export class MapComponent implements OnInit {
       }
     ];
 
-
   }
-
-
 }
