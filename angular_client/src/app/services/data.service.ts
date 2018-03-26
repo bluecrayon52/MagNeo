@@ -110,25 +110,15 @@ export class DataService {
   getLayers() {
     const url = `${this.BASE_URL}/layers`;
     console.log('[data.service.ts]: getLayers url:' + url);
-    // this._http.get(url, {headers: this.headers}).subscribe(res => console.log(res));
     return this._http.get(url, {headers: this.headers}).map(response => response.json());
   }
 
   // set a relationship between two layer nodes
   // pass in two layer node names and a relationship object , node1:string, node2:string, rel:object
-  setRel() {
-    return this._http.get('/api/rel')   // return something for testing purposes
-    .map(result => this.result = result.json());
-  }
-
-  // returns a Layer object from the DB that matches the name
-  getLayer(node: string) {
-
-  }
-
-  // returns the relationship object, if any, that links the two layer nodes passed in
-  getRel(node1: string, node2: string) {
-
+  getSim(name) {
+    const url = `${this.BASE_URL}/layers/` + name + `/similar`;
+    console.log('[data.service.ts]: getSim url:' + url);
+    return this._http.get(url, {headers: this.headers}).map(response => response.json());
   }
 
 }
