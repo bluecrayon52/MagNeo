@@ -152,28 +152,40 @@ class LayersView(GRest):
 
 
     # route for getting all the similar layers of a given layer 
-    @route("/<layer_id>/similar", methods=["GET"])
-    def similar(self, layer_id):
+    @route("/<name>/similar", methods=["GET"])
+    def similar(self, name):
         try:
-            layer = Layer.nodes.get(**{self.__selection_field__.get("primary"):
-                                   str(markupsafe.escape(layer_id))})
+            layer = Layer.nodes.get(**{self.__selection_field__.get("primary"): str(name)})
             # if the layer exists 
             if (layer):
+                # print('we found a layer for ' + str(name), file=sys.stderr)
                 # get the similarity relationship 
-                similar_layers = layer.similarity.get()
-
+                similar_layers = layer.similarity.all()
                 # if there are similar layers 
                 if (similar_layers):
-
                     # return them as a json dictionary 
-                    return jsonify(similar=similar_layers.to_dict()), 200
+                    # print('here is the similarity' + str(similar_layers), file=sys.stderr)
+                    sim_list = []
+                    coefs = []
+                    for sim in similar_layers:
+                        # print('name: '+ sim.name, file=sys.stderr)
+                        layer2 =  Layer.nodes.get(**{self.__selection_field__.get("primary"): str(sim.name)})
+                        if (layer2):
+                            print('we found a layer for ' + str(sim.name), file=sys.stderr)
+                            rel = layer.all_relationships(layer2)
+                            print(rel)
+                        sim_list.append(sim.name)
+                    # print('sim_list: '+str(sim_list), file=sys.stdout)
+                    sim_dict = dict.fromkeys(sim_list)
+                    print('sim_dict: '+str(sim_dict), file=sys.stdout)
+                    return jsonify(similar=sim_dict), 200
                 else:
                     return jsonify(errors=["Selected layer has no similarity relationships."]), 404
             else:
+                print('we did NOT find a layer for '+ str(name), file=sys.stderr)
                 return jsonify(errors=["Selected layer does not exists!"]), 404
         except:
             return jsonify(errors=["An error occurred while attempting to get the layer similarity."]), 500
-        
 
 
 class ArtifactsView(GRest):
