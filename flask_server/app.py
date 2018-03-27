@@ -159,25 +159,27 @@ class LayersView(GRest):
             # if the layer exists 
             if (layer):
                 # print('we found a layer for ' + str(name), file=sys.stderr)
-                # get the similarity relationship 
+                # get all the similarity relationships for the layer 
                 similar_layers = layer.similarity.all()
                 # if there are similar layers 
                 if (similar_layers):
-                    # return them as a json dictionary 
                     # print('here is the similarity' + str(similar_layers), file=sys.stderr)
                     sim_list = []
-                    coefs = []
+                    coeffs = []
                     for sim in similar_layers:
                         # print('name: '+ sim.name, file=sys.stderr)
                         layer2 =  Layer.nodes.get(**{self.__selection_field__.get("primary"): str(sim.name)})
-                        if (layer2):
-                            print('we found a layer for ' + str(sim.name), file=sys.stderr)
-                            rel = layer.all_relationships(layer2)
-                            print(rel)
+                        # print('we found a layer2 for ' + str(sim.name), file=sys.stderr)
+                        rel_coeff = layer.similarity.relationship(layer2).coefficient
+                        # print(rel_coeff)
+                        coeffs.append(rel_coeff)
                         sim_list.append(sim.name)
                     # print('sim_list: '+str(sim_list), file=sys.stdout)
-                    sim_dict = dict.fromkeys(sim_list)
-                    print('sim_dict: '+str(sim_dict), file=sys.stdout)
+                    sim_dict = dict(zip(sim_list, coeffs))
+                    # print('\n', file=sys.stdout)
+                    # print('---------------[ Layer Input name: '+name+' ]---------------', file=sys.stdout)
+                    # print('sim_dict: '+str(sim_dict), file=sys.stdout)
+                    # print('\n', file=sys.stdout)
                     return jsonify(similar=sim_dict), 200
                 else:
                     return jsonify(errors=["Selected layer has no similarity relationships."]), 404

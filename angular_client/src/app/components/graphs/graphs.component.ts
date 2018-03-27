@@ -60,7 +60,7 @@ export class GraphsComponent implements OnInit {
 
         let similarity = [];
         this._dataService.getSim(name).toPromise()
-          .then(resp => {similarity = resp; } )
+          .then(resp => { similarity = resp.similar; } )
           .then(() => { console.log('[graphs.component.ts] getRelationships() similarity: for ' + name + ' :');
                         console.log(similarity); })
           .catch((error) => console.log('[graphs.component.ts] getRelationships() similarity error: ' + error));
