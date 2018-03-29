@@ -45,10 +45,20 @@ export class LoadComponent implements OnInit {
 
   submit(): void {
     // pass fileString along to service to be sent to server
+    // const createGraphPromise = (file) =>
+    //   new Promise((resolve, reject) => {
+    //     console.log('----------------[createGraphPromise]----------------');
+    //     this._dataService.createGraph(this.fileString);
+    //     resolve('Graph Created!');
+    //   });
+
+
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
     this._dataService.createGraph(this.fileString);
+    // createGraphPromise(this.fileString)
+    // .then(() => this._dataService.getLayersInternally());
+    // .then(() => this._dataService.getSimInternally());
     this._dataService.changeMessage(true);
   }
-
 }

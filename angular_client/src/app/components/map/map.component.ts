@@ -28,7 +28,7 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     this._dataService.currentMessage.subscribe(message => this.doSomething(message));
-      this.initMap();
+    this.initMap();
   }
 
   doSomething(message) {
@@ -39,10 +39,13 @@ export class MapComponent implements OnInit {
   initMap() {
     // this._dataService.currentMessage.subscribe(message => this.message = message);
     // this._dataService.currentMessage.subscribe(message => this.doSomething(message));
+
     this._dataService.getLayers().subscribe(resp => {
         this.layers = resp.layers;
-        console.log('[map.components.ts]: initMap() getLayers() response:' + resp.layers);
+        console.log('[map.components.ts]: initMap() getLayers() response layers length: ' + resp.layers.length);
         });
+
+    this.layers = this._dataService.layers;
 
     console.log('ngOnInit ran ...');
     this.title = 'This is a Map';

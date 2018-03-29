@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import { reject } from 'q';
 
 @Injectable()
 export class DataService {
@@ -13,6 +16,10 @@ export class DataService {
   private headers: Headers = new Headers({'Content-Type': 'application/json'});
   result: any;
 
+  testArray = ['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12'];
+  layers = [];
+  layersAndSims = [];
+
   constructor(private _http: Http) {
     console.log('Data service connected...');
   }
@@ -20,12 +27,14 @@ export class DataService {
   changeMessage(message: boolean) {
     this.messageSource.next(message);
   }
+
   createGraph(data) {
     console.log('The data is in good hands now!');
     const layers = data.split('\r');
     console.log('CSV header: ' + layers[0]);
     console.log ('layers: ' + layers);
     const allMotifs = [];
+    const promises = [];
 
     // create layers
     for (let i = 1; i < layers.length; i++) {
@@ -65,16 +74,15 @@ export class DataService {
 
       const body = JSON.stringify(layerData);
       console.log(body);
-      this._http.post(url, body, {headers: this.headers})
-      .subscribe(() => {},
-                  err => console.log(err)
-      );
-
+      promises.push(this._http.post(url, body, {headers: this.headers}));
     }
-    // TODO: create a new artifact
+    Observable.forkJoin(promises).toPromise().then(() => this.calcBrainerdRobinson(allMotifs));
+  }
+
+  calcBrainerdRobinson(allMotifs) {
     // get the mitif count data
     const allMotifsAgain = [];
-    console.log('allMotifs: ' + allMotifs);
+    console.log('[data.service.ts]: calcBrainerdRobinson(), allMotifs: ' + allMotifs);
     for (let i = 0; i < allMotifs.length; i++) {
       const someMotifs = allMotifs[i];
       const motifArray = someMotifs.slice(1);
@@ -102,9 +110,26 @@ export class DataService {
     const bigChunk = JSON.stringify(tempChunk);
     console.log('bigChunk: ' + bigChunk);
     this._http.post(url, bigChunk, {headers: this.headers})
-      .subscribe(() => {},
+      .toPromise().then(() => this.getLayersInternally(),
                   err => console.log(err)
       );
+  }
+
+  getLayersInternally() {
+    const url = `${this.BASE_URL}/layers`;
+    console.log('[data.service.ts]: getLayersInternally url:' + url);
+    this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
+    .then(resp => this.layers = resp.layers).then(() => this.getSimInternally());
+  }
+
+  getSimInternally() {
+    console.log('[data.service.ts]: getSimInternally is called!' );
+    this.layers.map( (layer) => {
+      const url = `${this.BASE_URL}/layers/` + layer.name + `/similar`;
+      console.log('[data.service.ts]: getSimInternally url:' + url);
+      this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
+      .then(resp => this.layersAndSims.push({layer: layer.name, similar: resp}));
+    });
   }
 
   getLayers() {
@@ -113,8 +138,7 @@ export class DataService {
     return this._http.get(url, {headers: this.headers}).map(response => response.json());
   }
 
-  // set a relationship between two layer nodes
-  // pass in two layer node names and a relationship object , node1:string, node2:string, rel:object
+
   getSim(name) {
     const url = `${this.BASE_URL}/layers/` + name + `/similar`;
     console.log('[data.service.ts]: getSim url:' + url);
