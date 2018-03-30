@@ -12,20 +12,26 @@ export class UserComponent implements OnInit {
 
   viewM: boolean;
   viewG: boolean;
+  message: boolean;
 
-  constructor(private modalService: NgbModal, private dataService: DataService) {
+  constructor(private modalService: NgbModal, private _dataService: DataService) {
     console.log('constructor ran ...');
-
    }
 
   ngOnInit() {
     console.log('ngOnInit ran ...');
+    this._dataService.currentMessage.subscribe(message => this.loadMapView(message));
+    this._dataService.getLayersInternally();
+  }
+
+  loadMapView(message) {
+    console.log('[map.component.ts]: loadMapView message: ' + message);
     this.viewM = true;
+
   }
 
   open() {
     const modalRef = this.modalService.open(LoadComponent);
-    // modalRef.componentInstance.name = 'World';
   }
 
   viewMap() {

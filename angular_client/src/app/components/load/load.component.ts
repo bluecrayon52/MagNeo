@@ -8,7 +8,7 @@ import { DataService } from '../../services/data.service'; // Neo4j Data
   styleUrls: ['./load.component.css']
 })
 export class LoadComponent implements OnInit {
-  message: boolean;
+  // message: boolean;
 
   public fileString;
 
@@ -19,7 +19,7 @@ export class LoadComponent implements OnInit {
    }
 
    ngOnInit() {
-     this._dataService.currentMessage.subscribe(message => this.message = message);
+    //  this._dataService.currentMessage.subscribe(message => this.message = message);
   }
 
    changeListener($event): void {
@@ -33,8 +33,6 @@ export class LoadComponent implements OnInit {
     const fileType = inputValue.parentElement.id;
 
     myReader.onloadend = (e) => {
-        // myReader.result is a String of the uploaded file
-        // console.log(myReader.result);
         this.fileString = myReader.result;
         console.log('Data Preview');
         console.log(this.fileString);
@@ -44,21 +42,8 @@ export class LoadComponent implements OnInit {
   }
 
   submit(): void {
-    // pass fileString along to service to be sent to server
-    // const createGraphPromise = (file) =>
-    //   new Promise((resolve, reject) => {
-    //     console.log('----------------[createGraphPromise]----------------');
-    //     this._dataService.createGraph(this.fileString);
-    //     resolve('Graph Created!');
-    //   });
-
-
     console.log('Submitted! Thanks!');
     this.activeModal.close('Close click');
     this._dataService.createGraph(this.fileString);
-    // createGraphPromise(this.fileString)
-    // .then(() => this._dataService.getLayersInternally());
-    // .then(() => this._dataService.getSimInternally());
-    this._dataService.changeMessage(true);
   }
 }

@@ -17,37 +17,29 @@ export class MapComponent implements OnInit {
 
   constructor(private _dataService: DataService) {
 
-        // Access the Data Service's getLayers() method we defined
-        // this._dataService.getLayers().subscribe(resp => {
-        //     this.layers = resp.layers;
-        //     console.log('[map.components.ts]: constructor getLayers response:' + resp.layers);
-        //     });
-
-        // console.log('[map.components.ts] constructor this.layers: ' + this.layers);
       }
 
   ngOnInit() {
-    this._dataService.currentMessage.subscribe(message => this.doSomething(message));
-    this.initMap();
+    // trigger initMap again after new data is loaded
+    this._dataService.currentMessage.subscribe(message => this.initTheMap(message));
   }
 
-  doSomething(message) {
-      console.log('[map.component.ts]: doSomething message: ' + message);
+  initTheMap(message) {
+      console.log('[map.component.ts]: initTheMap message: ' + message);
       this.initMap();
     }
 
+    getLayers() {
+        this._dataService.getLayers().subscribe(
+            layers => this.layers = layers
+        );
+    }
+
   initMap() {
-    // this._dataService.currentMessage.subscribe(message => this.message = message);
-    // this._dataService.currentMessage.subscribe(message => this.doSomething(message));
+    this.getLayers();
 
-    this._dataService.getLayers().subscribe(resp => {
-        this.layers = resp.layers;
-        console.log('[map.components.ts]: initMap() getLayers() response layers length: ' + resp.layers.length);
-        });
-
-    this.layers = this._dataService.layers;
-
-    console.log('ngOnInit ran ...');
+    console.log('initMap ran .......');
+    console.log('this.layers: ' + this.layers);
     this.title = 'This is a Map';
     this.lat = 44.836151;   // Bordeaux, France
     this.lng = -0.580816;

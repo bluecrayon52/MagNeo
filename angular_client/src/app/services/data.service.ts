@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/observable/of';
 import { reject } from 'q';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class DataService {
   result: any;
 
   testArray = ['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12'];
-  layers = [];
+  private layers: Array<any> = [];
   layersAndSims = [];
 
   constructor(private _http: Http) {
@@ -119,7 +120,7 @@ export class DataService {
     const url = `${this.BASE_URL}/layers`;
     console.log('[data.service.ts]: getLayersInternally url:' + url);
     this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
-    .then(resp => this.layers = resp.layers).then(() => this.getSimInternally());
+    .then(resp => this.layers = resp.layers).then(() => { this.changeMessage(true); this.getSimInternally(); }, err => console.log(err));
   }
 
   getSimInternally() {
@@ -128,16 +129,19 @@ export class DataService {
       const url = `${this.BASE_URL}/layers/` + layer.name + `/similar`;
       console.log('[data.service.ts]: getSimInternally url:' + url);
       this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
-      .then(resp => this.layersAndSims.push({layer: layer.name, similar: resp}));
+      .then(resp => this.layersAndSims.push({layer: layer.name, similar: resp}), err => console.log(err));
     });
   }
 
-  getLayers() {
-    const url = `${this.BASE_URL}/layers`;
-    console.log('[data.service.ts]: getLayers url:' + url);
-    return this._http.get(url, {headers: this.headers}).map(response => response.json());
-  }
+  // getLayers() {
+  //   const url = `${this.BASE_URL}/layers`;
+  //   console.log('[data.service.ts]: getLayers url:' + url);
+  //   return this._http.get(url, {headers: this.headers}).map(response => response.json());
+  // }
 
+  getLayers() {
+    return Observable.of(this.layers);
+  }
 
   getSim(name) {
     const url = `${this.BASE_URL}/layers/` + name + `/similar`;

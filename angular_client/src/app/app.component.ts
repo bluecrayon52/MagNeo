@@ -9,16 +9,8 @@ import 'rxjs/add/operator/toPromise';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
-  url = 'http://localhost:8000/n4jg-layer';
+
   constructor(private http: Http) {}
-
-  public getLayers() {
-
-      this.http.get(this.url).toPromise().then((res) => {
-          console.log(res.json());
-      });
 
   }
 
-}

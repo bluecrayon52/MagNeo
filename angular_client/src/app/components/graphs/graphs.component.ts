@@ -12,7 +12,7 @@ export class GraphsComponent implements OnInit {
   nodes: Node[] = [];
   links: Link[] = [];
 
-  layers: Array<any>;
+  layers:   Array<any>;
   layersAndSims: Array<any>;
 
   constructor(private _dataService: DataService) {
@@ -72,14 +72,14 @@ export class GraphsComponent implements OnInit {
     // });
 
 
-    const N = 20,
-    getIndex = number => number - 1;
+    // const N = 20,
+    // getIndex = number => number - 1;
 
     /** constructing the nodes array */
-    this._dataService.layers.map((layer, index) => {
-      console.log('[graphs.component.ts] layers.map() layer.name: ' + layer.name + ', index: ' + index);
-      this.nodes.push(new Node(layer.name, index));
-    });
+    // this._dataService.layers.map((layer, index) => {
+    //   console.log('[graphs.component.ts] layers.map() layer.name: ' + layer.name + ', index: ' + index);
+    //   this.nodes.push(new Node(layer.name, index));
+    // });
 
 
     // for (let i = 1; i <= N; i++) {
@@ -95,7 +95,7 @@ export class GraphsComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this._dataService.currentMessage.subscribe(message => this.initTheGraph(message));
     // this._dataService.getLayers().toPromise().then(resp => {this.layers = resp.layers; } ).then(() => this.getRelationships());
 
     // this._dataService.getLayers().subscribe(resp => {
@@ -106,5 +106,28 @@ export class GraphsComponent implements OnInit {
 
   }
 
+  initTheGraph(message) {
+    console.log('[map.component.ts]: initTheMap message: ' + message);
+    this.initGraph();
+  }
+
+  getLayers() {
+    this._dataService.getLayers().subscribe(
+        layers => this.layers = layers
+    );
+  }
+
+  initGraph() {
+    this.getLayers();
+
+    const N = 20,
+    getIndex = number => number - 1;
+
+    /** constructing the nodes array */
+    this.layers.map((layer, index) => {
+      console.log('[graphs.component.ts] layers.map() layer: ' + layer.name + ', index: ' + index);
+      this.nodes.push(new Node(layer.name, index));
+    });
+  }
 }
 
