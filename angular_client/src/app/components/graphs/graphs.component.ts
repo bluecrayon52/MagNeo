@@ -11,40 +11,11 @@ import { Node, Link } from '../../d3/models';
 export class GraphsComponent implements OnInit {
   nodes: Node[] = [];
   links: Link[] = [];
-
+  waiting = true;
   layers:   Array<any>;
   layersAndSims: Array<any>;
 
   constructor(private _dataService: DataService) {
-
-    // const tempLayersAndSims = [];
-    // this._dataService.getLayers().toPromise()
-    // .then(resp => { this.layers = resp.layers;
-    // console.log('[graphs.component.ts]: constructor getLayers() response layers length: ' + resp.layers.length); })
-    // .then(() => {
-    //   this.layers.map( (layer) => {
-    //     let similarity = [];
-    //     this._dataService.getSim(layer.name).toPromise()
-    //     .then(resp => { similarity = resp.similar; })
-    //     .then(() => { tempLayersAndSims.push({layer: layer.name, similar: similarity}); })
-    //     .catch((error) => console.log('[graphs.component.ts] getRelationships() similarity error: ' + error));
-    //   });
-    //   this.layersAndSims = tempLayersAndSims;
-    // }).then(() => console.log(this.layersAndSims) );
-
-    // this._dataService.getLayers().toPromise()
-    // .then(resp => { this.layers = resp.layers;
-    // console.log('[graphs.component.ts]: constructor getLayers() response layers length: ' + resp.layers.length); })
-    // .then(() => {
-
-    /* construct the node array */
-
-    // const N = this.layers.length;
-    // console.log('[graphs.component.ts] N: ' + N );
-    // this.layers.map((layer, index) => {
-    //   console.log('[graphs.component.ts] layers.map() layer.name: ' + layer.name + ', index: ' + index);
-    //   this.nodes.push(new Node(layer.name, index));
-    // });
 
     // for (let i = 1; i <= N; i++) {
     //   for (let m = 2; i * m <= N; m++) {
@@ -57,53 +28,15 @@ export class GraphsComponent implements OnInit {
     //   }
     // }
 
-    // }).then(() => {console.log('[graphs.component.ts] nodes.length: ' + this.nodes.length); } );
-
-    // .then(() => {
-    //   this.layers.map( (layer) => {
-    //     let similarity = [];
-    //     this._dataService.getSim(layer.name).toPromise()
-    //     .then(resp => { similarity = resp.similar;
-    //     console.log('[graphs.component.ts]: constructor similarity' + similarity);
-    //     /* connect nodes with links */
-    //     })
-    //     .catch((error) => console.log('[graphs.component.ts] getRelationships() similarity error: ' + error));
-    //   });
-    // });
-
-
-    // const N = 20,
-    // getIndex = number => number - 1;
-
-    /** constructing the nodes array */
-    // this._dataService.layers.map((layer, index) => {
-    //   console.log('[graphs.component.ts] layers.map() layer.name: ' + layer.name + ', index: ' + index);
-    //   this.nodes.push(new Node(layer.name, index));
-    // });
-
-
-    // for (let i = 1; i <= N; i++) {
-    //   for (let m = 2; i * m <= N; m++) {
-    //     /** increasing connections toll on connecting nodes */
-    //     this.nodes[getIndex(i)].linkCount++;
-    //     this.nodes[getIndex(i * m)].linkCount++;
-
-    //     /** connecting the nodes before starting the simulation */
-    //     this.links.push(new Link(i, i * m));
-    //   }
-    // }
   }
 
   ngOnInit() {
     this._dataService.currentMessage.subscribe(message => this.initTheGraph(message));
-    // this._dataService.getLayers().toPromise().then(resp => {this.layers = resp.layers; } ).then(() => this.getRelationships());
 
-    // this._dataService.getLayers().subscribe(resp => {
-    //   this.layers = resp.layers;
-    //   console.log('[graphs.components.ts]: ngOnInit() getLayers() response:' + resp.layers);
-    // });
-    // setTimeout(() => { this.getRelationships(); }, 3000);
+  }
 
+  waitForIt(val) {
+    this.waiting = val;
   }
 
   initTheGraph(message) {
@@ -113,21 +46,55 @@ export class GraphsComponent implements OnInit {
 
   getLayers() {
     this._dataService.getLayers().subscribe(
-        layers => this.layers = layers
+        resp => this.layers = resp
+    );
+  }
+
+  getSims() {
+    this._dataService.getSims().subscribe(
+        resp => this.layersAndSims = resp
     );
   }
 
   initGraph() {
     this.getLayers();
+    this.getSims();
 
-    const N = 20,
-    getIndex = number => number - 1;
-
-    /** constructing the nodes array */
-    this.layers.map((layer, index) => {
-      console.log('[graphs.component.ts] layers.map() layer: ' + layer.name + ', index: ' + index);
-      this.nodes.push(new Node(layer.name, index));
+    const nodesPromise = () =>
+    new Promise((resolve) => {
+      console.log('[nodesPromise] CALLED');
+      const last = this.layers.length - 1;
+      this.layers.map((layer, index) => {
+        console.log('[graphs.component.ts] layers.map() layer: ' + layer.name + ', index: ' + index);
+        this.nodes.push(new Node(layer.name, index));
+        if (index === last) {
+          console.log('[nodesPromise] RESOLVED');
+          resolve();
+        }
+      });
     });
+
+    const linksPromise = () =>
+    new Promise((resolve) => {
+      console.log('[linksPromise] CALLED');
+      const last = this.layersAndSims.length - 1;
+      this.layersAndSims.map((lAS, index) => {
+        console.log('[graphs.component.ts] layersAndSims.map() lAS.layer: ' + lAS.layer + ', index: ' + index);
+        const simKeys = Object.keys(lAS.similar.similar);
+        const sim = lAS.similar.similar;
+
+        for ( let i = 0; i < simKeys.length; i++) {
+          const key = simKeys[i];
+          console.log('key: ' + key + ', value: ' + sim[key]);
+          this.links.push(new Link(lAS.layer, key));
+        }
+        if (index === last) {
+          console.log('[linksPromise] RESOLVED');
+          resolve();
+        }
+      });
+    });
+    nodesPromise().then(() => linksPromise().then(() => {console.log('you can stop waiting now!'); this.waitForIt(false); }));
   }
 }
 

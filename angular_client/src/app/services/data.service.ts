@@ -19,7 +19,7 @@ export class DataService {
 
   testArray = ['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12'];
   private layers: Array<any> = [];
-  layersAndSims = [];
+  private layersAndSims: Array<any> = [];
 
   constructor(private _http: Http) {
     console.log('Data service connected...');
@@ -77,6 +77,7 @@ export class DataService {
       console.log(body);
       promises.push(this._http.post(url, body, {headers: this.headers}));
     }
+    console.log('[outside for loop] promises.length: ' + promises.length);
     Observable.forkJoin(promises).toPromise().then(() => this.calcBrainerdRobinson(allMotifs));
   }
 
@@ -117,19 +118,51 @@ export class DataService {
   }
 
   getLayersInternally() {
+    console.log('[data.service.ts]: getLayersInternally CALLED' );
     const url = `${this.BASE_URL}/layers`;
     console.log('[data.service.ts]: getLayersInternally url:' + url);
     this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
-    .then(resp => this.layers = resp.layers).then(() => { this.changeMessage(true); this.getSimInternally(); }, err => console.log(err));
+    .then(resp => this.layers = resp.layers)
+    .then(() => {
+      // this.changeMessage(true);
+      console.log('[data.service.ts]: getLayersInternally this.layers.length :' + this.layers.length);
+      this.getSimInternally();
+    }, err => console.log(err));
   }
 
   getSimInternally() {
-    console.log('[data.service.ts]: getSimInternally is called!' );
+    const promises = [];
+    let omitted = 0;
+
+    const simPromise = (name, sims) =>
+    new Promise((resolve) => {
+      const oldLength = this.layersAndSims.length;
+      console.log('oldLength: ' + oldLength);
+      const newLength = this.layersAndSims.push(
+        {layer: name, similar: sims}
+      );
+      console.log('newLength: ' + newLength);
+      if (newLength === this.layers.length - omitted) {
+        console.log('[data.service.ts]: getSimInternally ALL DONE');
+        this.changeMessage(true);
+      }
+      if (newLength > oldLength) {
+        console.log('resolving.....');
+        resolve();
+      }
+    });
+
+    console.log('[data.service.ts]: getSimInternally CALLED' );
     this.layers.map( (layer) => {
       const url = `${this.BASE_URL}/layers/` + layer.name + `/similar`;
       console.log('[data.service.ts]: getSimInternally url:' + url);
       this._http.get(url, {headers: this.headers}).map(response => response.json()).toPromise()
-      .then(resp => this.layersAndSims.push({layer: layer.name, similar: resp}), err => console.log(err));
+      .then(resp => {
+        simPromise(layer.name, resp);
+        }, err => {
+          omitted++;
+          console.log(err);
+        });
     });
   }
 
@@ -143,10 +176,14 @@ export class DataService {
     return Observable.of(this.layers);
   }
 
-  getSim(name) {
-    const url = `${this.BASE_URL}/layers/` + name + `/similar`;
-    console.log('[data.service.ts]: getSim url:' + url);
-    return this._http.get(url, {headers: this.headers}).map(response => response.json());
+ // getSim(name) {
+  //   const url = `${this.BASE_URL}/layers/` + name + `/similar`;
+  //   console.log('[data.service.ts]: getSim url:' + url);
+  //   return this._http.get(url, {headers: this.headers}).map(response => response.json());
+  // }
+
+  getSims() {
+    return Observable.of(this.layersAndSims);
   }
 
 }

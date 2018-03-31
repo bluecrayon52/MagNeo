@@ -1,5 +1,5 @@
-<!-- <h1>Our Neo4j is Working!</h1>
-
+<!-- <div *ngIf=!waiting>
+<h1>Our Neo4j is Working!</h1>
 <ul>
   <li *ngFor="let layer of layers">
     ID: {{ layer.layer_id}}
@@ -15,6 +15,8 @@
       </li>
     </div>
   </li>
-</ul> -->
-
-<graph [nodes]="nodes" [links]="links"></graph>
+</ul>
+</div> -->
+<!-- <md-spinner></md-spinner> -->
+<!-- <div *ngIf=wait >I am waiting</div> -->
+<graph *ngIf=!waiting [nodes]="nodes" [links]="links"></graph>

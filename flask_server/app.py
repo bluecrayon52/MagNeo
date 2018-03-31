@@ -176,10 +176,12 @@ class LayersView(GRest):
                         sim_list.append(sim.name)
                     # print('sim_list: '+str(sim_list), file=sys.stdout)
                     sim_dict = dict(zip(sim_list, coeffs))
-                    # print('\n', file=sys.stdout)
-                    # print('---------------[ Layer Input name: '+name+' ]---------------', file=sys.stdout)
-                    # print('sim_dict: '+str(sim_dict), file=sys.stdout)
-                    # print('\n', file=sys.stdout)
+
+                    print('\n', file=sys.stdout)
+                    print('---------------[ Layer Input name: '+name+' ]---------------', file=sys.stdout)
+                    print('sim_dict: '+str(sim_dict), file=sys.stdout)
+                    print('\n', file=sys.stdout)
+
                     return jsonify(similar=sim_dict), 200
                 else:
                     return jsonify(errors=["Selected layer has no similarity relationships."]), 404

@@ -12,7 +12,7 @@ export class UserComponent implements OnInit {
 
   viewM: boolean;
   viewG: boolean;
-  message: boolean;
+  // message: boolean;
 
   constructor(private modalService: NgbModal, private _dataService: DataService) {
     console.log('constructor ran ...');
@@ -25,7 +25,7 @@ export class UserComponent implements OnInit {
   }
 
   loadMapView(message) {
-    console.log('[map.component.ts]: loadMapView message: ' + message);
+    console.log('[user.component.ts]: loadMapView message: ' + message);
     this.viewM = true;
 
   }
