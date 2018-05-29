@@ -82,19 +82,26 @@ export class GraphsComponent implements OnInit {
         console.log('[graphs.component.ts] layersAndSims.map() lAS.layer: ' + lAS.layer + ', index: ' + index);
         const simKeys = Object.keys(lAS.similar.similar);
         const sim = lAS.similar.similar;
+        let count = 0;
 
         for ( let i = 0; i < simKeys.length; i++) {
           const key = simKeys[i];
           console.log('key: ' + key + ', value: ' + sim[key]);
           this.links.push(new Link(lAS.layer, key));
+          count++;
         }
-        if (index === last) {
+        if (index === last && count === simKeys.length) {
           console.log('[linksPromise] RESOLVED');
           resolve();
         }
       });
     });
-    nodesPromise().then(() => linksPromise().then(() => {console.log('you can stop waiting now!'); this.waitForIt(false); }));
+    nodesPromise()
+    // .then(() => linksPromise()
+      .then(() => {
+        console.log('you can stop waiting now!');
+        this.waitForIt(false);
+      });
   }
 }
 
